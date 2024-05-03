@@ -161,62 +161,382 @@ read_coefficients:
 	li a7, 4
 	la a0, prompt
 	ecall
-		
+
+# Prompt for input
 read_a:
-	li a7, 4
-	la a0, prompt_a
-	ecall
-	
-	li a7, 5
-	ecall
-	
-	mv t1, a0
-	
-	slli t1, t1, 24
-	la t0, a
-	sw t1, (t0)
 
+    	li a7, 4                      
+    	la a0, prompt_a               
+    	ecall                         
+
+    	li a7, 8                      
+    	la a0, parser                 
+    	li a1, 100                    
+    	ecall                         
+
+    	la a3, parser                 
+    	li t5, '.'                   
+    	li t3, '0'                   
+    	li t4, 10 
+    	li s11, 0 # length of fraction part 
+    	li t0, '-'                    
+
+
+    	li a6, 0                      
+    	li t1, 0 
+
+a_check_sign:
+	lb t6, (a3)
+	li a5, 1
+	bne t6, t0, a_loop_int_part                                   
+	li a5, -1
+	addi a3, a3, 1
+	
+a_loop_int_part:
+    	lb t6, (a3)                   
+    	beqz t6, a_loop_fraction_part 
+    	blt t6, t3, a_loop_fraction_part  
+    	beq t6, t5, a_loop_fraction_part  
+    	addi t6, t6, -48
+    	mul a6, a6, t4 
+    	add a6, a6, t6 
+    	addi a3, a3, 1   
+    	j a_loop_int_part
+
+a_loop_fraction_part:
+    	addi a3, a3, 1         
+
+a_fraction_part_loop:
+    	lb t6, (a3)                   
+    	blt t6, t3, a_count_comp_factor    
+    	addi t6, t6, -48 
+    	mul t1, t1, t4
+    	add t1, t1, t6
+    	addi a3, a3, 1
+    	addi s11, s11, 1                
+    	j a_fraction_part_loop     
+    
+a_count_comp_factor:
+	li a0, 1
+a_count_comp_factor_loop:
+	beqz s11, a_calc_fraction_part
+	mul a0, a0, t4
+	addi s11, s11, -1
+	j a_count_comp_factor_loop
+
+a_calc_fraction_part:
+	li s10, 0 # fraction 
+	mv t3, t1
+	li t2, 0 #counter
+	li t0, 23
+a_calc_fraction_part_loop:
+	slli t3, t3, 1
+	beq t3, a0, a_add_1
+	beq t2, t0, a_prepare_to_store
+	blt t3, a0, a_add_0
+a_add_1:
+	li t6, 1
+	sub s9, t0, t2
+	sll t6, t6, s9
+	add s10, s10, t6
+	sub t3, t3, a0
+	beqz t3, a_prepare_to_store
+
+a_add_0:
+	addi t2, t2, 1
+	j a_calc_fraction_part_loop 
+	
+a_prepare_to_store: 
+    	slli a6, a6, 24                 
+    	add a6, a6, s10 
+    	mul a6, a6, a5               
+    	la t6, a                      
+    	sw a6, (t6)
+    	lw a0, a
+    	li a7, 1
+    	ecall
+	
+# Prompt for input
 read_b:
-	li a7, 4
-	la a0, prompt_b
-	ecall
-	
-	li a7, 5
-	ecall
-	
-	mv t1, a0
-	
-	slli t1, t1, 24
-	la t0, b
-	sw t1, (t0)	
 
+    	li a7, 4                      
+    	la a0, prompt_b              
+    	ecall                         
+
+    	li a7, 8                      
+    	la a0, parser                 
+    	li a1, 100                    
+    	ecall                         
+
+    	la a3, parser                 
+    	li t5, '.'                   
+    	li t3, '0'                   
+    	li t4, 10 
+    	li s11, 0 # length of fraction part 
+    	li t0, '-'                    
+
+
+    	li a6, 0                      
+    	li t1, 0 
+
+b_check_sign:
+	lb t6, (a3)
+	li a5, 1
+	bne t6, t0, b_loop_int_part                                   
+	li a5, -1
+	addi a3, a3, 1
+	
+b_loop_int_part:
+    	lb t6, (a3)                   
+    	beqz t6, b_loop_fraction_part 
+    	blt t6, t3, b_loop_fraction_part  
+    	beq t6, t5, b_loop_fraction_part  
+    	addi t6, t6, -48
+    	mul a6, a6, t4 
+    	add a6, a6, t6 
+    	addi a3, a3, 1   
+    	j b_loop_int_part
+
+b_loop_fraction_part:
+    	addi a3, a3, 1         
+
+b_fraction_part_loop:
+    	lb t6, (a3)                   
+    	blt t6, t3, b_count_comp_factor    
+    	addi t6, t6, -48 
+    	mul t1, t1, t4
+    	add t1, t1, t6
+    	addi a3, a3, 1
+    	addi s11, s11, 1                
+    	j b_fraction_part_loop     
+    
+b_count_comp_factor:
+	li a0, 1
+b_count_comp_factor_loop:
+	beqz s11, b_calc_fraction_part
+	mul a0, a0, t4
+	addi s11, s11, -1
+	j b_count_comp_factor_loop
+
+b_calc_fraction_part:
+	li s10, 0 # fraction 
+	mv t3, t1
+	li t2, 0 #counter
+	li t0, 23
+b_calc_fraction_part_loop:
+	slli t3, t3, 1
+	beq t3, a0, b_add_1
+	beq t2, t0, b_prepare_to_store
+	blt t3, a0, b_add_0
+b_add_1:
+	li t6, 1
+	sub s9, t0, t2
+	sll t6, t6, s9
+	add s10, s10, t6
+	sub t3, t3, a0
+	beqz t3, b_prepare_to_store
+
+b_add_0:
+	addi t2, t2, 1
+	j b_calc_fraction_part_loop 
+	
+b_prepare_to_store: 
+    	slli a6, a6, 24                 
+    	add a6, a6, s10 
+    	mul a6, a6, a5               
+    	la t6, b                      
+    	sw a6, (t6)
+    	lw a0, b
+    	li a7, 1
+    	ecall
+
+# Prompt for input
 read_c:
-	li a7, 4
-	la a0, prompt_c
-	ecall
+
+    	li a7, 4                      
+    	la a0, prompt_c               
+    	ecall                         
+
+    	li a7, 8                      
+    	la a0, parser                 
+    	li a1, 100                    
+    	ecall                         
+
+    	la a3, parser                 
+    	li t5, '.'                   
+    	li t3, '0'                   
+    	li t4, 10 
+    	li s11, 0 # length of fraction part 
+    	li t0, '-'                    
+
+
+    	li a6, 0                      
+    	li t1, 0 
+
+c_check_sign:
+	lb t6, (a3)
+	li a5, 1
+	bne t6, t0, c_loop_int_part                                   
+	li a5, -1
+	addi a3, a3, 1
 	
-	li a7, 5
-	ecall
+c_loop_int_part:
+    	lb t6, (a3)                   
+    	beqz t6, c_loop_fraction_part 
+    	blt t6, t3, c_loop_fraction_part  
+    	beq t6, t5, c_loop_fraction_part  
+    	addi t6, t6, -48
+    	mul a6, a6, t4 
+    	add a6, a6, t6 
+    	addi a3, a3, 1   
+    	j c_loop_int_part
+
+c_loop_fraction_part:
+    	addi a3, a3, 1         
+
+c_fraction_part_loop:
+    	lb t6, (a3)                   
+    	blt t6, t3, c_count_comp_factor    
+    	addi t6, t6, -48 
+    	mul t1, t1, t4
+    	add t1, t1, t6
+    	addi a3, a3, 1
+    	addi s11, s11, 1                
+    	j c_fraction_part_loop     
+    
+c_count_comp_factor:
+	li a0, 1
+c_count_comp_factor_loop:
+	beqz s11, c_calc_fraction_part
+	mul a0, a0, t4
+	addi s11, s11, -1
+	j c_count_comp_factor_loop
+
+c_calc_fraction_part:
+	li s10, 0 # fraction 
+	mv t3, t1
+	li t2, 0 #counter
+	li t0, 23
+c_calc_fraction_part_loop:
+	slli t3, t3, 1
+	beq t3, a0, c_add_1
+	beq t2, t0, c_prepare_to_store
+	blt t3, a0, c_add_0
+c_add_1:
+	li t6, 1
+	sub s9, t0, t2
+	sll t6, t6, s9
+	add s10, s10, t6
+	sub t3, t3, a0
+	beqz t3, c_prepare_to_store
+
+c_add_0:
+	addi t2, t2, 1
+	j c_calc_fraction_part_loop 
 	
-	mv t1, a0
+c_prepare_to_store: 
+    	slli a6, a6, 24                 
+    	add a6, a6, s10 
+    	mul a6, a6, a5               
+    	la t6, c                      
+    	sw a6, (t6)
+    	lw a0, c
+    	li a7, 1
+    	ecall
 	
-	slli t1, t1, 24
-	la t0, c
-	sw t1, (t0)
-	
+# Prompt for input
 read_d:
-	li a7, 4
-	la a0, prompt_d
-	ecall
+
+    	li a7, 4                      
+    	la a0, prompt_d               
+    	ecall                         
+
+    	li a7, 8                      
+    	la a0, parser                 
+    	li a1, 100                    
+    	ecall                         
+
+    	la a3, parser                 
+    	li t5, '.'                   
+    	li t3, '0'                   
+    	li t4, 10 
+    	li s11, 0 # length of fraction part 
+    	li t0, '-'                    
+
+
+    	li a6, 0                      
+    	li t1, 0 
+
+d_check_sign:
+	lb t6, (a3)
+	li a5, 1
+	bne t6, t0, d_loop_int_part                                   
+	li a5, -1
+	addi a3, a3, 1
 	
-	li a7, 5
-	ecall
+d_loop_int_part:
+    	lb t6, (a3)                   
+    	beqz t6, d_loop_fraction_part 
+    	blt t6, t3, d_loop_fraction_part  
+    	beq t6, t5, d_loop_fraction_part  
+    	addi t6, t6, -48
+    	mul a6, a6, t4 
+    	add a6, a6, t6 
+    	addi a3, a3, 1   
+    	j d_loop_int_part
+
+d_loop_fraction_part:
+    	addi a3, a3, 1         
+
+d_fraction_part_loop:
+    	lb t6, (a3)                   
+    	blt t6, t3, d_count_comp_factor    
+    	addi t6, t6, -48 
+    	mul t1, t1, t4
+    	add t1, t1, t6
+    	addi a3, a3, 1
+    	addi s11, s11, 1                
+    	j d_fraction_part_loop     
+    
+d_count_comp_factor:
+	li a0, 1
+d_count_comp_factor_loop:
+	beqz s11, d_calc_fraction_part
+	mul a0, a0, t4
+	addi s11, s11, -1
+	j d_count_comp_factor_loop
+
+d_calc_fraction_part:
+	li s10, 0 # fraction 
+	mv t3, t1
+	li t2, 0 #counter
+	li t0, 23
+d_calc_fraction_part_loop:
+	slli t3, t3, 1
+	beq t3, a0, d_add_1
+	beq t2, t0, d_prepare_to_store
+	blt t3, a0, d_add_0
+d_add_1:
+	li t6, 1
+	sub s9, t0, t2
+	sll t6, t6, s9
+	add s10, s10, t6
+	sub t3, t3, a0
+	beqz t3, d_prepare_to_store
+
+d_add_0:
+	addi t2, t2, 1
+	j d_calc_fraction_part_loop 
 	
-	mv t1, a0
-	
-	slli t1, t1, 24
-	la t0, d
-	sw t1, (t0)
+d_prepare_to_store: 
+    	slli a6, a6, 24                 
+    	add a6, a6, s10 
+    	mul a6, a6, a5               
+    	la t6, d                      
+    	sw a6, (t6)
+    	lw a0, d
+    	li a7, 1
+    	ecall
 
 set:
 	li s4, 0xfe000000 #min value (-2)

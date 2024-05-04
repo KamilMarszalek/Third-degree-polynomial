@@ -577,7 +577,7 @@ set:
 	#padding
 	slli t0, s2, 1
 	add t0, t0, s2
-	andi s7, t0, 0x03
+	andi s7, t0, 0x03 #mod 4
 
 loop:
 	lw t2, a
@@ -666,12 +666,12 @@ change:
 	add s1, s1, t2
 	
 	# colouring pixels
-	li t2, 0xff
-	sb t2, (s1)
-	addi s1, s1, 1
 	li t2, 0x00
 	sb t2, (s1)
 	addi s1, s1, 1
+	sb t2, (s1)
+	addi s1, s1, 1
+	li t2, 0xff
 	sb t2, (s1)
 	addi s1, s1, 1
 	blt s5, s2, loop

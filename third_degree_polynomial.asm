@@ -53,6 +53,7 @@ parser:	.space	100
 	# s7 - padding
 	
 main:	
+	
 	li a7, 4
 	la a0, info
 	ecall
@@ -138,6 +139,7 @@ read_bmp:
 	ecall
 
 read_pixels:
+	
 	la a0, in
 	li a1, 0
 	li a7, 1024
@@ -158,12 +160,14 @@ read_pixels:
 	
 	# Q8.24
 read_coefficients:
+	
 	li a7, 4
 	la a0, prompt
 	ecall
 
 
 read_a:
+	
 	# Prompt for input
     	li a7, 4                      
     	la a0, prompt_a               
@@ -181,11 +185,11 @@ read_a:
     	li s11, 0 # length of fraction part 
     	li t0, '-'                    
 
-
-    	li a6, 0                      
+	li a6, 0                      
     	li t1, 0 
 
 a_check_sign:
+	
 	# Check if input is negative
 	lb t6, (a3)
 	li a5, 1
@@ -194,6 +198,7 @@ a_check_sign:
 	addi a3, a3, 1
 	
 a_loop_int_part:
+	
 	#calculate the int part
     	lb t6, (a3)                   
     	beqz t6, a_loop_fraction_part 
@@ -206,10 +211,12 @@ a_loop_int_part:
     	j a_loop_int_part
 
 a_loop_fraction_part:
+	
 	# skip '.'
     	addi a3, a3, 1         
 
 a_fraction_part_loop:
+	
 	# calculate fraction part as int
     	lb t6, (a3)                   
     	blt t6, t3, a_count_comp_factor    
@@ -221,27 +228,34 @@ a_fraction_part_loop:
     	j a_fraction_part_loop     
     
 a_count_comp_factor:
+	
 	# calculate the closest '1' for fraction part
 	li a0, 1
 	
 a_count_comp_factor_loop:
+	
 	beqz s11, a_calc_fraction_part
 	mul a0, a0, t4
 	addi s11, s11, -1
 	j a_count_comp_factor_loop
 
 a_calc_fraction_part:
+
 	# calculate binary equivalent of fraction part
 	li s10, 0 # fraction 
 	mv t3, t1
 	li t2, 0 #counter
 	li t0, 23
+
 a_calc_fraction_part_loop:
+	
 	slli t3, t3, 1
 	beq t3, a0, a_add_1
 	beq t2, t0, a_prepare_to_store
 	blt t3, a0, a_add_0
+
 a_add_1:
+	
 	li t6, 1
 	sub s9, t0, t2
 	sll t6, t6, s9
@@ -250,22 +264,21 @@ a_add_1:
 	beqz t3, a_prepare_to_store
 
 a_add_0:
+	
 	addi t2, t2, 1
 	j a_calc_fraction_part_loop 
 	
 a_prepare_to_store: 
+	
 	# Sum int and fraction part
     	slli a6, a6, 24                 
     	add a6, a6, s10 
     	mul a6, a6, a5               
     	la t6, a                      
     	sw a6, (t6)
-    	lw a0, a
-    	li a7, 1
-    	ecall
-	
 
 read_b:
+	
 	# Prompt for input
     	li a7, 4                      
     	la a0, prompt_b              
@@ -283,11 +296,11 @@ read_b:
     	li s11, 0 # length of fraction part 
     	li t0, '-'                    
 
-
-    	li a6, 0                      
+	li a6, 0                      
     	li t1, 0 
 
 b_check_sign:
+	
 	# Check if input is negative
 	lb t6, (a3)
 	li a5, 1
@@ -296,6 +309,7 @@ b_check_sign:
 	addi a3, a3, 1
 	
 b_loop_int_part:
+	
 	#calculate the int part
     	lb t6, (a3)                   
     	beqz t6, b_loop_fraction_part 
@@ -308,10 +322,12 @@ b_loop_int_part:
     	j b_loop_int_part
 
 b_loop_fraction_part:
+	
 	# skip '.'
     	addi a3, a3, 1         
 
 b_fraction_part_loop:
+	
 	# calculate fraction part as int
     	lb t6, (a3)                   
     	blt t6, t3, b_count_comp_factor    
@@ -323,26 +339,34 @@ b_fraction_part_loop:
     	j b_fraction_part_loop     
     
 b_count_comp_factor:
+	
 	# calculate the closest '1' for fraction part
 	li a0, 1
+	
 b_count_comp_factor_loop:
+	
 	beqz s11, b_calc_fraction_part
 	mul a0, a0, t4
 	addi s11, s11, -1
 	j b_count_comp_factor_loop
 
 b_calc_fraction_part:
+
 	# calculate binary equivalent of fraction part
 	li s10, 0 # fraction 
 	mv t3, t1
 	li t2, 0 #counter
 	li t0, 23
+
 b_calc_fraction_part_loop:
+
 	slli t3, t3, 1
 	beq t3, a0, b_add_1
 	beq t2, t0, b_prepare_to_store
 	blt t3, a0, b_add_0
+
 b_add_1:
+
 	li t6, 1
 	sub s9, t0, t2
 	sll t6, t6, s9
@@ -351,22 +375,21 @@ b_add_1:
 	beqz t3, b_prepare_to_store
 
 b_add_0:
+	
 	addi t2, t2, 1
 	j b_calc_fraction_part_loop 
 	
 b_prepare_to_store: 
+	
 	# Sum int and fraction part
     	slli a6, a6, 24                 
     	add a6, a6, s10 
     	mul a6, a6, a5               
     	la t6, b                      
     	sw a6, (t6)
-    	lw a0, b
-    	li a7, 1
-    	ecall
-
 
 read_c:
+	
 	# Prompt for input
     	li a7, 4                      
     	la a0, prompt_c               
@@ -384,11 +407,11 @@ read_c:
     	li s11, 0 # length of fraction part 
     	li t0, '-'                    
 
-
-    	li a6, 0                      
+	li a6, 0                      
     	li t1, 0 
 
 c_check_sign:
+	
 	# Check if input is negative
 	lb t6, (a3)
 	li a5, 1
@@ -397,6 +420,7 @@ c_check_sign:
 	addi a3, a3, 1
 	
 c_loop_int_part:
+	
 	#calculate the int part
     	lb t6, (a3)                   
     	beqz t6, c_loop_fraction_part 
@@ -409,10 +433,12 @@ c_loop_int_part:
     	j c_loop_int_part
 
 c_loop_fraction_part:
+	
 	# skip '.'
     	addi a3, a3, 1         
 
 c_fraction_part_loop:
+	
 	# calculate fraction part as int
     	lb t6, (a3)                   
     	blt t6, t3, c_count_comp_factor    
@@ -424,26 +450,34 @@ c_fraction_part_loop:
     	j c_fraction_part_loop     
     
 c_count_comp_factor:
+	
 	# calculate the closest '1' for fraction part
 	li a0, 1
+	
 c_count_comp_factor_loop:
+	
 	beqz s11, c_calc_fraction_part
 	mul a0, a0, t4
 	addi s11, s11, -1
 	j c_count_comp_factor_loop
 
 c_calc_fraction_part:
+	
 	# calculate binary equivalent of fraction part
 	li s10, 0 # fraction 
 	mv t3, t1
 	li t2, 0 #counter
 	li t0, 23
+	
 c_calc_fraction_part_loop:
+	
 	slli t3, t3, 1
 	beq t3, a0, c_add_1
 	beq t2, t0, c_prepare_to_store
 	blt t3, a0, c_add_0
+
 c_add_1:
+	
 	li t6, 1
 	sub s9, t0, t2
 	sll t6, t6, s9
@@ -452,22 +486,21 @@ c_add_1:
 	beqz t3, c_prepare_to_store
 
 c_add_0:
+	
 	addi t2, t2, 1
 	j c_calc_fraction_part_loop 
 	
 c_prepare_to_store: 
+	
 	# Sum int and fraction part
     	slli a6, a6, 24                 
     	add a6, a6, s10 
     	mul a6, a6, a5               
     	la t6, c                      
     	sw a6, (t6)
-    	lw a0, c
-    	li a7, 1
-    	ecall
-	
 
 read_d:
+	
 	# Prompt for input
     	li a7, 4                      
     	la a0, prompt_d               
@@ -485,11 +518,11 @@ read_d:
     	li s11, 0 # length of fraction part 
     	li t0, '-'                    
 
-
-    	li a6, 0                      
+	li a6, 0                      
     	li t1, 0 
 
 d_check_sign:
+	
 	# Check if input is negative
 	lb t6, (a3)
 	li a5, 1
@@ -498,6 +531,7 @@ d_check_sign:
 	addi a3, a3, 1
 	
 d_loop_int_part:
+	
 	#calculate the int part
     	lb t6, (a3)                   
     	beqz t6, d_loop_fraction_part 
@@ -510,10 +544,12 @@ d_loop_int_part:
     	j d_loop_int_part
 
 d_loop_fraction_part:
+	
 	# skip '.'
     	addi a3, a3, 1         
 
 d_fraction_part_loop:
+	
 	# calculate fraction part as int
     	lb t6, (a3)                   
     	blt t6, t3, d_count_comp_factor    
@@ -525,26 +561,34 @@ d_fraction_part_loop:
     	j d_fraction_part_loop     
     
 d_count_comp_factor:
+	
 	# calculate the closest '1' for fraction part
 	li a0, 1
+
 d_count_comp_factor_loop:
+	
 	beqz s11, d_calc_fraction_part
 	mul a0, a0, t4
 	addi s11, s11, -1
 	j d_count_comp_factor_loop
 
 d_calc_fraction_part:
+	
 	# calculate binary equivalent of fraction part
 	li s10, 0 # fraction 
 	mv t3, t1
 	li t2, 0 #counter
 	li t0, 23
+	
 d_calc_fraction_part_loop:
+	
 	slli t3, t3, 1
 	beq t3, a0, d_add_1
 	beq t2, t0, d_prepare_to_store
 	blt t3, a0, d_add_0
+
 d_add_1:
+	
 	li t6, 1
 	sub s9, t0, t2
 	sll t6, t6, s9
@@ -553,21 +597,21 @@ d_add_1:
 	beqz t3, d_prepare_to_store
 
 d_add_0:
+	
 	addi t2, t2, 1
 	j d_calc_fraction_part_loop 
 	
 d_prepare_to_store: 
+	
 	# Sum int and fraction part
     	slli a6, a6, 24                 
     	add a6, a6, s10 
     	mul a6, a6, a5               
     	la t6, d                      
     	sw a6, (t6)
-    	lw a0, d
-    	li a7, 1
-    	ecall
 
 set:
+	
 	li s4, 0xf8000000 #min value (-8)
 	li s5, 0 #counter
 	
@@ -580,6 +624,7 @@ set:
 	andi s7, t0, 0x03 #mod 4
 
 loop:
+	
 	lw t2, a
 	lw t3, b
 	lw t4, c
@@ -636,6 +681,7 @@ b_inner_loop:
 	add t0, t0, s6
 	
 change:
+
 	# s0 - offset
 	# s1 - start
 	# s2 - width
@@ -677,6 +723,7 @@ change:
 	blt s5, s2, loop
 
 save:
+
 	# save new pic
 	la a0, out
 	li a1, 1
@@ -701,13 +748,13 @@ save:
 	li a7, 57
 	ecall
 	
-
-
 end:
+
 	li a7, 10
 	ecall
 
 error:
+
 	li a7, 4
 	la a0, error_m
 	ecall

@@ -568,7 +568,7 @@ d_prepare_to_store:
     	ecall
 
 set:
-	li s4, 0xfe000000 #min value (-2)
+	li s4, 0xf8000000 #min value (-8)
 	li s5, 0 #counter
 	
 	#height / 2
@@ -624,10 +624,10 @@ b_inner_loop:
 	add t0, t0, t4
 	add t0, t0, t5
 	
-	srai t0, t0, 16
+	srai t0, t0, 18
 	mv t1, s5
-	li t6, 0x00010000
-	add s4, s4, t6 # 1/256
+	li t6, 0x00040000
+	add s4, s4, t6 # 1/64
 	addi s5, s5, 1 # next pixel
 	li t6, 511
 	bgt t0, t6, loop

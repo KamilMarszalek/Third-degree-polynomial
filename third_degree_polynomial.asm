@@ -162,9 +162,9 @@ read_coefficients:
 	la a0, prompt
 	ecall
 
-# Prompt for input
-read_a:
 
+read_a:
+	# Prompt for input
     	li a7, 4                      
     	la a0, prompt_a               
     	ecall                         
@@ -186,6 +186,7 @@ read_a:
     	li t1, 0 
 
 a_check_sign:
+	# Check if input is negative
 	lb t6, (a3)
 	li a5, 1
 	bne t6, t0, a_loop_int_part                                   
@@ -193,6 +194,7 @@ a_check_sign:
 	addi a3, a3, 1
 	
 a_loop_int_part:
+	#calculate the int part
     	lb t6, (a3)                   
     	beqz t6, a_loop_fraction_part 
     	blt t6, t3, a_loop_fraction_part  
@@ -204,9 +206,11 @@ a_loop_int_part:
     	j a_loop_int_part
 
 a_loop_fraction_part:
+	# skip '.'
     	addi a3, a3, 1         
 
 a_fraction_part_loop:
+	# calculate fraction part as int
     	lb t6, (a3)                   
     	blt t6, t3, a_count_comp_factor    
     	addi t6, t6, -48 
@@ -217,7 +221,9 @@ a_fraction_part_loop:
     	j a_fraction_part_loop     
     
 a_count_comp_factor:
+	# calculate the closest '1' for fraction part
 	li a0, 1
+	
 a_count_comp_factor_loop:
 	beqz s11, a_calc_fraction_part
 	mul a0, a0, t4
@@ -225,6 +231,7 @@ a_count_comp_factor_loop:
 	j a_count_comp_factor_loop
 
 a_calc_fraction_part:
+	# calculate binary equivalent of fraction part
 	li s10, 0 # fraction 
 	mv t3, t1
 	li t2, 0 #counter
@@ -247,6 +254,7 @@ a_add_0:
 	j a_calc_fraction_part_loop 
 	
 a_prepare_to_store: 
+	# Sum int and fraction part
     	slli a6, a6, 24                 
     	add a6, a6, s10 
     	mul a6, a6, a5               
@@ -256,9 +264,9 @@ a_prepare_to_store:
     	li a7, 1
     	ecall
 	
-# Prompt for input
-read_b:
 
+read_b:
+	# Prompt for input
     	li a7, 4                      
     	la a0, prompt_b              
     	ecall                         
@@ -280,6 +288,7 @@ read_b:
     	li t1, 0 
 
 b_check_sign:
+	# Check if input is negative
 	lb t6, (a3)
 	li a5, 1
 	bne t6, t0, b_loop_int_part                                   
@@ -287,6 +296,7 @@ b_check_sign:
 	addi a3, a3, 1
 	
 b_loop_int_part:
+	#calculate the int part
     	lb t6, (a3)                   
     	beqz t6, b_loop_fraction_part 
     	blt t6, t3, b_loop_fraction_part  
@@ -298,9 +308,11 @@ b_loop_int_part:
     	j b_loop_int_part
 
 b_loop_fraction_part:
+	# skip '.'
     	addi a3, a3, 1         
 
 b_fraction_part_loop:
+	# calculate fraction part as int
     	lb t6, (a3)                   
     	blt t6, t3, b_count_comp_factor    
     	addi t6, t6, -48 
@@ -311,6 +323,7 @@ b_fraction_part_loop:
     	j b_fraction_part_loop     
     
 b_count_comp_factor:
+	# calculate the closest '1' for fraction part
 	li a0, 1
 b_count_comp_factor_loop:
 	beqz s11, b_calc_fraction_part
@@ -319,6 +332,7 @@ b_count_comp_factor_loop:
 	j b_count_comp_factor_loop
 
 b_calc_fraction_part:
+	# calculate binary equivalent of fraction part
 	li s10, 0 # fraction 
 	mv t3, t1
 	li t2, 0 #counter
@@ -341,6 +355,7 @@ b_add_0:
 	j b_calc_fraction_part_loop 
 	
 b_prepare_to_store: 
+	# Sum int and fraction part
     	slli a6, a6, 24                 
     	add a6, a6, s10 
     	mul a6, a6, a5               
@@ -350,9 +365,9 @@ b_prepare_to_store:
     	li a7, 1
     	ecall
 
-# Prompt for input
-read_c:
 
+read_c:
+	# Prompt for input
     	li a7, 4                      
     	la a0, prompt_c               
     	ecall                         
@@ -374,6 +389,7 @@ read_c:
     	li t1, 0 
 
 c_check_sign:
+	# Check if input is negative
 	lb t6, (a3)
 	li a5, 1
 	bne t6, t0, c_loop_int_part                                   
@@ -381,6 +397,7 @@ c_check_sign:
 	addi a3, a3, 1
 	
 c_loop_int_part:
+	#calculate the int part
     	lb t6, (a3)                   
     	beqz t6, c_loop_fraction_part 
     	blt t6, t3, c_loop_fraction_part  
@@ -392,9 +409,11 @@ c_loop_int_part:
     	j c_loop_int_part
 
 c_loop_fraction_part:
+	# skip '.'
     	addi a3, a3, 1         
 
 c_fraction_part_loop:
+	# calculate fraction part as int
     	lb t6, (a3)                   
     	blt t6, t3, c_count_comp_factor    
     	addi t6, t6, -48 
@@ -405,6 +424,7 @@ c_fraction_part_loop:
     	j c_fraction_part_loop     
     
 c_count_comp_factor:
+	# calculate the closest '1' for fraction part
 	li a0, 1
 c_count_comp_factor_loop:
 	beqz s11, c_calc_fraction_part
@@ -413,6 +433,7 @@ c_count_comp_factor_loop:
 	j c_count_comp_factor_loop
 
 c_calc_fraction_part:
+	# calculate binary equivalent of fraction part
 	li s10, 0 # fraction 
 	mv t3, t1
 	li t2, 0 #counter
@@ -435,6 +456,7 @@ c_add_0:
 	j c_calc_fraction_part_loop 
 	
 c_prepare_to_store: 
+	# Sum int and fraction part
     	slli a6, a6, 24                 
     	add a6, a6, s10 
     	mul a6, a6, a5               
@@ -444,9 +466,9 @@ c_prepare_to_store:
     	li a7, 1
     	ecall
 	
-# Prompt for input
-read_d:
 
+read_d:
+	# Prompt for input
     	li a7, 4                      
     	la a0, prompt_d               
     	ecall                         
@@ -468,6 +490,7 @@ read_d:
     	li t1, 0 
 
 d_check_sign:
+	# Check if input is negative
 	lb t6, (a3)
 	li a5, 1
 	bne t6, t0, d_loop_int_part                                   
@@ -475,6 +498,7 @@ d_check_sign:
 	addi a3, a3, 1
 	
 d_loop_int_part:
+	#calculate the int part
     	lb t6, (a3)                   
     	beqz t6, d_loop_fraction_part 
     	blt t6, t3, d_loop_fraction_part  
@@ -486,9 +510,11 @@ d_loop_int_part:
     	j d_loop_int_part
 
 d_loop_fraction_part:
+	# skip '.'
     	addi a3, a3, 1         
 
 d_fraction_part_loop:
+	# calculate fraction part as int
     	lb t6, (a3)                   
     	blt t6, t3, d_count_comp_factor    
     	addi t6, t6, -48 
@@ -499,6 +525,7 @@ d_fraction_part_loop:
     	j d_fraction_part_loop     
     
 d_count_comp_factor:
+	# calculate the closest '1' for fraction part
 	li a0, 1
 d_count_comp_factor_loop:
 	beqz s11, d_calc_fraction_part
@@ -507,6 +534,7 @@ d_count_comp_factor_loop:
 	j d_count_comp_factor_loop
 
 d_calc_fraction_part:
+	# calculate binary equivalent of fraction part
 	li s10, 0 # fraction 
 	mv t3, t1
 	li t2, 0 #counter
@@ -529,6 +557,7 @@ d_add_0:
 	j d_calc_fraction_part_loop 
 	
 d_prepare_to_store: 
+	# Sum int and fraction part
     	slli a6, a6, 24                 
     	add a6, a6, s10 
     	mul a6, a6, a5               

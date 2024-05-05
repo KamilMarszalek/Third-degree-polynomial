@@ -1,10 +1,9 @@
 	.data
-	.align 2
 info:	.asciz	"Third degree polynomial generator (ax^3 + bx^2 + cx + d):\n"
 prompt:	.asciz	"Insert coefficients of polynomial (all coefficients should be between [-128, 128):\n"
 in:	.asciz	"in.bmp"
 out:	.asciz	"out.bmp"
-buffer:	.space	4	#bmp header
+buffer:	.space	4	
 prompt_a:	.asciz	"Enter a:\n"
 prompt_b:	.asciz	"Enter b:\n"
 prompt_c:	.asciz	"Enter c:\n"
@@ -645,7 +644,7 @@ a_inner_loop:
 	bnez a7, a_inner_loop
 	
 	#calculate bx^2
-	li a7, 2
+	li a7, 2 #counter
 
 b_inner_loop:
 	

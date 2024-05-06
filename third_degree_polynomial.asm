@@ -621,6 +621,16 @@ set:
 	slli t0, s2, 1
 	add t0, t0, s2
 	andi s7, t0, 0x03 #mod 4
+	
+	#finding borders of pic
+	la t1, width 
+	lw s8, (t1)
+	mv s9, s8
+	srli s8, s8, 1 # maximal px
+	addi s8, s8, -1
+	srli s9, s9, 1 
+	neg s9, s9 #minimal px
+	
 
 loop:
 	
@@ -673,10 +683,8 @@ b_inner_loop:
 	li t6, 0x00040000
 	add s4, s4, t6 # 1/64
 	addi s5, s5, 1 # next pixel
-	li t6, 511
-	bgt t0, t6, loop
-	li t6, -512
-	blt t0, t6, loop #value out of borders
+	bgt t0, s8, loop #value out of borders
+	blt t0, s9, loop #value out of borders
 	add t0, t0, s6
 	
 change:

@@ -1,8 +1,8 @@
 	.data
 info:	.asciz	"Third degree polynomial generator (ax^3 + bx^2 + cx + d):\n"
-prompt:	.asciz	"Insert coefficients of polynomial (all coefficients should be between [-128, 128):\n"
-in:	.asciz	"input3.bmp"
-out:	.asciz	"output3.bmp"
+prompt:	.asciz	"Insert coefficients of polynomial (all coefficients should be between [-16, 16):\n"
+in:	.asciz	"input1.bmp"
+out:	.asciz	"output1.bmp"
 buffer:	.space	4	
 prompt_a:	.asciz	"Enter a:\n"
 prompt_b:	.asciz	"Enter b:\n"

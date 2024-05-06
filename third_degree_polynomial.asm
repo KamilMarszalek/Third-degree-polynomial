@@ -1,8 +1,8 @@
 	.data
 info:	.asciz	"Third degree polynomial generator (ax^3 + bx^2 + cx + d):\n"
 prompt:	.asciz	"Insert coefficients of polynomial (all coefficients should be between [-128, 128):\n"
-in:	.asciz	"in.bmp"
-out:	.asciz	"out.bmp"
+in:	.asciz	"input3.bmp"
+out:	.asciz	"output3.bmp"
 buffer:	.space	4	
 prompt_a:	.asciz	"Enter a:\n"
 prompt_b:	.asciz	"Enter b:\n"
@@ -631,6 +631,14 @@ set:
 	srli s9, s9, 1 
 	neg s9, s9 #minimal px
 	
+	#calculate scale based on image width
+	li t6, 1024
+	div t6, t6, s2 
+	mv s10, t6 #Scale factor based on standard width 1024
+	li t6, 18 #Standard shift amount for 1024x1024
+	add t6, t6, s10 #Adjust shift based on scale
+	addi t6, t6, -1
+	mv s11, t6 #Shift amount
 
 loop:
 	
@@ -678,14 +686,19 @@ b_inner_loop:
 	add t0, t0, t4
 	add t0, t0, t5
 	
-	srai t0, t0, 18
+	#apply scale and shift
+	sra t0, t0, s11
+	
+	
 	mv t1, s5
 	li t6, 0x00040000
-	add s4, s4, t6 # 1/64
+	mul t6, t6, s10
+	add s4, s4, t6 # Increment x-coordinate 
 	addi s5, s5, 1 # next pixel
 	bgt t0, s8, loop #value out of borders
 	blt t0, s9, loop #value out of borders
 	add t0, t0, s6
+	
 	
 change:
 

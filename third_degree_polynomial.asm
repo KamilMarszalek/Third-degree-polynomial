@@ -42,14 +42,6 @@ parser:	.space	100
 
 	.text
 	.globl main
-	# s0 - size
-	# s1 - address of memory allocated on heap
-	# s2 - width
-	# s3 - height
-	# s4 - x coor
-	# s5 - counter
-	# s6 - height /2
-	# s7 - padding
 	
 main:	
 	
@@ -710,6 +702,8 @@ change:
 	# s5 - counter
 	# s6 - height / 2
 	# s7 - padding
+	# s8 - max
+	# s9 - min
 	
 	lw s1, start
 	lw s0, offset
